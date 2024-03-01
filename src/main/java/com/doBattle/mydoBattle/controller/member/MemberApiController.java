@@ -1,6 +1,7 @@
 package com.doBattle.mydoBattle.controller.member;
 
 import com.doBattle.mydoBattle.entity.Member;
+import com.doBattle.mydoBattle.exception.member.MemberNullException;
 import com.doBattle.mydoBattle.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -17,7 +18,6 @@ public class MemberApiController {
     private MemberService memberService;
 
     @PostMapping("/signup")
-    //회원가입
     public ResponseEntity<String> signup(@RequestBody SignupDto signupDto){
         memberService.signup(signupDto);
         return ResponseEntity.status(HttpStatus.OK).body("회원가입 성공!");
@@ -32,5 +32,28 @@ public class MemberApiController {
         session.setAttribute("currentMember", member);
 
         return ResponseEntity.status(HttpStatus.OK).body("로그인 성공!");
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request){
+        //세션이 있으면 세션 반환, 없으면 null 반환 (세션 삭제 위해)
+        HttpSession session = request.getSession(false);
+        if(session != null)
+            session.invalidate();
+
+        return ResponseEntity.status(HttpStatus.OK).body("로그아웃 성공!");
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<String> delete(HttpServletRequest request){
+        HttpSession session = request.getSession(false);
+        if(session == null)
+            throw new MemberNullException("세션 없음. 멤버 조회 실패");
+
+        Member member = (Member) session.getAttribute("currentMember");
+        memberService.delete(member);
+        session.invalidate();   //세션 제거
+
+        return ResponseEntity.status(HttpStatus.OK).body("회원탈퇴 성공!");
     }
 }

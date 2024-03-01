@@ -5,6 +5,7 @@ import com.doBattle.mydoBattle.controller.member.SignupDto;
 import com.doBattle.mydoBattle.entity.Member;
 import com.doBattle.mydoBattle.exception.member.LoginException;
 import com.doBattle.mydoBattle.exception.member.MemberDuplicateException;
+import com.doBattle.mydoBattle.exception.member.MemberNotFoundException;
 import com.doBattle.mydoBattle.exception.member.MemberNullException;
 import com.doBattle.mydoBattle.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,5 +50,13 @@ public class MemberService {
             throw new LoginException("비밀번호가 일치하지 않습니다.");
 
         return member;
+    }
+
+    @Transactional
+    //회원탈퇴
+    public void delete(Member member) {
+        Member deleteMember = memberRepository.findById(member.getId())
+                .orElseThrow(() -> new MemberNotFoundException("탈퇴하려는 회원을 찾을 수 없습니다."));  //optional로 감싸져있어서
+        memberRepository.delete(deleteMember);
     }
 }

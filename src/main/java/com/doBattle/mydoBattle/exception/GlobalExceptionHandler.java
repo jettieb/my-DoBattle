@@ -2,6 +2,7 @@ package com.doBattle.mydoBattle.exception;
 
 import com.doBattle.mydoBattle.exception.member.LoginException;
 import com.doBattle.mydoBattle.exception.member.MemberDuplicateException;
+import com.doBattle.mydoBattle.exception.member.MemberNotFoundException;
 import com.doBattle.mydoBattle.exception.member.MemberNullException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(LoginException.class)
     public ResponseEntity<String> handleLoginException(LoginException e){
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(e.getMessage());
+    }
+
+    @ExceptionHandler(MemberNotFoundException.class)
+    public ResponseEntity<String> handleMemberNotFoundException(MemberNotFoundException e){
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(e.getMessage());
