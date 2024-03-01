@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,5 +56,15 @@ public class MemberApiController {
         session.invalidate();   //세션 제거
 
         return ResponseEntity.status(HttpStatus.OK).body("회원탈퇴 성공!");
+    }
+
+    @GetMapping("/main")
+    public ResponseEntity<MainPageResponseDto> main(HttpSession session){
+        Member member = (Member) session.getAttribute("currentMember");
+        if(member == null)
+            throw new MemberNullException("세션 없음. 멤버 조회 실패");
+
+        MainPageResponseDto dto = memberService.main(member);
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 }
