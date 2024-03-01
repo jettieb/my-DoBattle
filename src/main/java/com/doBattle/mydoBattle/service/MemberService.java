@@ -2,33 +2,33 @@ package com.doBattle.mydoBattle.service;
 
 import com.doBattle.mydoBattle.controller.member.SignupDto;
 import com.doBattle.mydoBattle.entity.Member;
-import com.doBattle.mydoBattle.error.MemberDuplicateException;
+import com.doBattle.mydoBattle.exception.SignupException;
 import com.doBattle.mydoBattle.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MemberService {
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     @Autowired
     private MemberRepository memberRepository;
 
-    @Transactional
-    //회원가입
     public void signup(SignupDto signupDto) {
-        //중복회원 찾기
+        //중복회원 검사
         if(memberRepository.findByUsername(signupDto.getUsername()) != null)
-            throw new MemberDuplicateException("중복된 닉네임으로 회원가입 실패");
+            throw new SignupException("중복 닉네임으로 회원가입 불가");
         if(memberRepository.findByIdentify(signupDto.getIdentify()) != null)
-            throw new MemberDuplicateException("중복된 아이디으로 회원가입 실패");
+            throw new SignupException("중복 아이디로 회원가입 불가");
+        if(signupDto.getUsername().isEmpty() || signupDto.getIdentify().isEmpty() || signupDto.getPassword().isEmpty())
+            throw new SignupException("닉네임/아이디/비밀번호 중 공백 있음");
 
-        //패스워드 암호화
+        //비밀번호 암호화
         signupDto.setPassword(passwordEncoder.encode(signupDto.getPassword()));
 
-        Member saveMember = Member.createMember(signupDto);
-        memberRepository.save(saveMember);
+        Member member = Member.createMember(signupDto);
+        memberRepository.save(member);
     }
 }

@@ -13,9 +13,8 @@ public class MemberApiController {
     @Autowired
     private MemberService memberService;
 
-    //회원가입
     @PostMapping("/signup")
-    private ResponseEntity<String> signup(@RequestBody SignupDto signupDto){
+    public ResponseEntity<String> signup(@RequestBody SignupDto signupDto){
         memberService.signup(signupDto);
         return ResponseEntity.status(HttpStatus.OK).body("회원가입 성공!");
     }

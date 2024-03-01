@@ -1,4 +1,4 @@
-package com.doBattle.mydoBattle.error;
+package com.doBattle.mydoBattle.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-    @ExceptionHandler(MemberDuplicateException.class)
-    public ResponseEntity<String> handleMemberDuplicateException(MemberDuplicateException e){
+    @ExceptionHandler(SignupException.class)
+    public ResponseEntity<String> handleMemberDuplicateException(SignupException e){
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(e.getMessage());

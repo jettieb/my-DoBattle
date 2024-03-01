@@ -10,7 +10,7 @@ public class SecurityConfig {
 
     //패스워드 인코더로 사용할 빈 등록
     @Bean
-    public static PasswordEncoder passwordEncoder() {
+    public static PasswordEncoder PasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }

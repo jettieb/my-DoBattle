@@ -2,12 +2,14 @@ package com.doBattle.mydoBattle.entity;
 
 import com.doBattle.mydoBattle.controller.member.SignupDto;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter @Setter
 @Entity
 public class Member {
     @Id
@@ -23,12 +25,12 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
-    public static Member createMember(SignupDto dto){
+    public static Member createMember(SignupDto signupDto) {
         return new Member(
-                dto.getId(),
-                dto.getUsername(),
-                dto.getIdentify(),
-                dto.getPassword()
+                signupDto.getId(),
+                signupDto.getUsername(),
+                signupDto.getIdentify(),
+                signupDto.getPassword()
         );
     }
 }
