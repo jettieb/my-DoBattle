@@ -1,5 +1,9 @@
 package com.doBattle.mydoBattle.exception;
 
+import com.doBattle.mydoBattle.exception.member.LoginException;
+import com.doBattle.mydoBattle.exception.member.MemberDuplicateException;
+import com.doBattle.mydoBattle.exception.member.MemberNotFoundException;
+import com.doBattle.mydoBattle.exception.member.MemberNullException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,10 +13,31 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-    @ExceptionHandler(SignupException.class)
-    public ResponseEntity<String> handleMemberDuplicateException(SignupException e){
+    @ExceptionHandler(MemberDuplicateException.class)
+    public ResponseEntity<String> handleMemberDuplicateException(MemberDuplicateException e){
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
+                .body(e.getMessage());
+    }
+
+    @ExceptionHandler(MemberNullException.class)
+    public ResponseEntity<String> handleMemberDuplicateException(MemberNullException e){
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(e.getMessage());
+    }
+
+    @ExceptionHandler(LoginException.class)
+    public ResponseEntity<String> handleLoginException(LoginException e){
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(e.getMessage());
+    }
+
+    @ExceptionHandler(MemberNotFoundException.class)
+    public ResponseEntity<String> handleMemberNotFoundException(MemberNotFoundException e){
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
                 .body(e.getMessage());
     }
 }
