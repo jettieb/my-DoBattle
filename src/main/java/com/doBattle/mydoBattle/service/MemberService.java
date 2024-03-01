@@ -1,6 +1,7 @@
 package com.doBattle.mydoBattle.service;
 
 import com.doBattle.mydoBattle.controller.member.LoginDto;
+import com.doBattle.mydoBattle.controller.member.MainPageResponseDto;
 import com.doBattle.mydoBattle.controller.member.SignupDto;
 import com.doBattle.mydoBattle.entity.Member;
 import com.doBattle.mydoBattle.exception.member.LoginException;
@@ -58,5 +59,10 @@ public class MemberService {
         Member deleteMember = memberRepository.findById(member.getId())
                 .orElseThrow(() -> new MemberNotFoundException("탈퇴하려는 회원을 찾을 수 없습니다."));  //optional로 감싸져있어서
         memberRepository.delete(deleteMember);
+    }
+
+    public MainPageResponseDto main(Member member) {
+        MainPageResponseDto dto = MainPageResponseDto.createDto(member);
+        return dto;
     }
 }
