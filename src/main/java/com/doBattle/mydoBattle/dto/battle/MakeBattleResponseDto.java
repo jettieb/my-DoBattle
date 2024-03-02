@@ -1,4 +1,4 @@
-package com.doBattle.mydoBattle.controller.battle;
+package com.doBattle.mydoBattle.dto.battle;
 
 import com.doBattle.mydoBattle.entity.Member;
 import lombok.AllArgsConstructor;

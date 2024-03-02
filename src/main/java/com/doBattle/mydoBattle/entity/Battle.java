@@ -1,6 +1,6 @@
 package com.doBattle.mydoBattle.entity;
 
-import com.doBattle.mydoBattle.controller.battle.MakeBattleRequestDto;
+import com.doBattle.mydoBattle.dto.battle.MakeBattleRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

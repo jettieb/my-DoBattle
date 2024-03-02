@@ -1,8 +1,8 @@
 package com.doBattle.mydoBattle.service;
 
-import com.doBattle.mydoBattle.controller.member.LoginDto;
-import com.doBattle.mydoBattle.controller.member.MainPageResponseDto;
-import com.doBattle.mydoBattle.controller.member.SignupDto;
+import com.doBattle.mydoBattle.dto.member.LoginDto;
+import com.doBattle.mydoBattle.dto.member.MainPageResponseDto;
+import com.doBattle.mydoBattle.dto.member.SignupDto;
 import com.doBattle.mydoBattle.entity.Member;
 import com.doBattle.mydoBattle.exception.member.LoginException;
 import com.doBattle.mydoBattle.exception.member.MemberDuplicateException;

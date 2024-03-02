@@ -1,7 +1,8 @@
 package com.doBattle.mydoBattle.service;
 
-import com.doBattle.mydoBattle.controller.battle.MakeBattleRequestDto;
-import com.doBattle.mydoBattle.controller.battle.MakeBattleResponseDto;
+import com.doBattle.mydoBattle.dto.battle.MakeBattleRequestDto;
+import com.doBattle.mydoBattle.dto.battle.MakeBattleResponseDto;
+import com.doBattle.mydoBattle.dto.battle.MakeBattleSuccessDto;
 import com.doBattle.mydoBattle.entity.Battle;
 import com.doBattle.mydoBattle.entity.Member;
 import com.doBattle.mydoBattle.exception.member.BattleNullException;
@@ -24,7 +25,7 @@ public class BattleService {
     }
 
     @Transactional
-    public void makeBattle(MakeBattleRequestDto dto, Member member){
+    public MakeBattleSuccessDto makeBattle(MakeBattleRequestDto dto, Member member){
         if(dto.getBattleName().isEmpty() || dto.getBattleCategory().isEmpty() || dto.getBattleEndDate() == null)
             throw new BattleNullException("배틀이름/카테고리/종료일자 중 하나가 비어있습니다.");
         if(dto.getBattleEndDate().isBefore(LocalDate.now()))
@@ -33,6 +34,9 @@ public class BattleService {
         Long battleCode = generateUniqueBattleCode();   //배틀 난수 생성
         Battle battle = Battle.createBattle(dto, member, battleCode);
         battleRepository.save(battle);
+
+        MakeBattleSuccessDto returnDto = new MakeBattleSuccessDto(battleCode);
+        return returnDto;
     }
     
     //배틀 난수코드 생성
