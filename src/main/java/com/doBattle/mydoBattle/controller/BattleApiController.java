@@ -1,5 +1,8 @@
-package com.doBattle.mydoBattle.controller.battle;
+package com.doBattle.mydoBattle.controller;
 
+import com.doBattle.mydoBattle.dto.battle.MakeBattleRequestDto;
+import com.doBattle.mydoBattle.dto.battle.MakeBattleResponseDto;
+import com.doBattle.mydoBattle.dto.battle.MakeBattleSuccessDto;
 import com.doBattle.mydoBattle.entity.Member;
 import com.doBattle.mydoBattle.exception.member.MemberNullException;
 import com.doBattle.mydoBattle.service.BattleService;
@@ -28,12 +31,12 @@ public class BattleApiController {
     }
 
     @PostMapping("/makeBattle")
-    public ResponseEntity<String> postMakeBattle(@RequestBody MakeBattleRequestDto dto, HttpSession session){
+    public ResponseEntity<MakeBattleSuccessDto> postMakeBattle(@RequestBody MakeBattleRequestDto dto, HttpSession session){
         Member member = (Member) session.getAttribute("currentMember");
         if(member == null)
             throw new MemberNullException("세션 없음.");
 
-        battleService.makeBattle(dto, member);
-        return ResponseEntity.status(HttpStatus.OK).body("배틀 만들기 성공");
+        MakeBattleSuccessDto returnDto = battleService.makeBattle(dto, member);
+        return ResponseEntity.status(HttpStatus.OK).body(returnDto);
     }
 }

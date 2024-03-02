@@ -1,14 +1,13 @@
-package com.doBattle.mydoBattle.controller.member;
+package com.doBattle.mydoBattle.dto.battle;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginDto {
-    private String identify;
-    private String password;
+@Getter @Setter
+public class MakeBattleSuccessDto {
+    private Long battleCode;
 }
