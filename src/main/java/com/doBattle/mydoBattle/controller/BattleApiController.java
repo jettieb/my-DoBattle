@@ -1,5 +1,6 @@
 package com.doBattle.mydoBattle.controller;
 
+import com.doBattle.mydoBattle.dto.battle.BattleListDto;
 import com.doBattle.mydoBattle.dto.battle.MakeBattleRequestDto;
 import com.doBattle.mydoBattle.dto.battle.MakeBattleResponseDto;
 import com.doBattle.mydoBattle.dto.battle.MakeBattleSuccessDto;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 public class BattleApiController {
@@ -38,5 +41,15 @@ public class BattleApiController {
 
         MakeBattleSuccessDto returnDto = battleService.makeBattle(dto, member);
         return ResponseEntity.status(HttpStatus.OK).body(returnDto);
+    }
+
+    @GetMapping("/doingBattleList")
+    public ResponseEntity<List<BattleListDto>> doingBattleList(HttpSession session){
+        Member member = (Member) session.getAttribute("currentMember");
+        if(member == null)
+            throw new MemberNullException("세션 없음.");
+
+        List<BattleListDto> dto = battleService.doingBattleList(member);
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 }

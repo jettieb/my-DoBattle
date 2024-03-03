@@ -1,5 +1,6 @@
 package com.doBattle.mydoBattle.exception;
 
+import com.doBattle.mydoBattle.exception.battle.BattleNullException;
 import com.doBattle.mydoBattle.exception.member.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

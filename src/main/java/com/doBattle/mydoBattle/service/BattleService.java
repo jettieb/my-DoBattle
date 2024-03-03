@@ -1,18 +1,21 @@
 package com.doBattle.mydoBattle.service;
 
+import com.doBattle.mydoBattle.dto.battle.BattleListDto;
 import com.doBattle.mydoBattle.dto.battle.MakeBattleRequestDto;
 import com.doBattle.mydoBattle.dto.battle.MakeBattleResponseDto;
 import com.doBattle.mydoBattle.dto.battle.MakeBattleSuccessDto;
 import com.doBattle.mydoBattle.entity.Battle;
 import com.doBattle.mydoBattle.entity.Member;
-import com.doBattle.mydoBattle.exception.member.BattleNullException;
+import com.doBattle.mydoBattle.exception.battle.BattleNullException;
 import com.doBattle.mydoBattle.repository.BattleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 public class BattleService {
@@ -37,6 +40,23 @@ public class BattleService {
 
         MakeBattleSuccessDto returnDto = new MakeBattleSuccessDto(battleCode);
         return returnDto;
+    }
+
+    public List<BattleListDto> doingBattleList(Member member) {
+        List<Battle> joinedBattle = battleRepository.findByMemberId(member.getId());
+        List<BattleListDto> dto = null;
+        for(int i=0; i< joinedBattle.size(); i++){
+            //배틀코드 동일한 다른 참여자 불러오기
+            List<Member> partnerUser = battleRepository.findByBattleCodeWithoutCurrentMember(joinedBattle.get(i).getBattleCode(), member.getId())
+                    .stream()
+                    .map(Battle::getJoinMember)   //Battle 객체에 대해 getJoinMember() 메서드를 호출해서 Member 객체 얻어냄
+                    .collect(Collectors.toList());
+
+            BattleListDto eachDto = BattleListDto.createDto(joinedBattle.get(i), partnerUser);
+            dto.set(i, eachDto);
+        }
+
+        return dto;
     }
     
     //배틀 난수코드 생성
