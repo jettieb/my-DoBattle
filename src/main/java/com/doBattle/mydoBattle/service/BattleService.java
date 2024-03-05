@@ -5,9 +5,11 @@ import com.doBattle.mydoBattle.dto.battle.MakeBattleRequestDto;
 import com.doBattle.mydoBattle.dto.battle.MakeBattleResponseDto;
 import com.doBattle.mydoBattle.dto.battle.MakeBattleSuccessDto;
 import com.doBattle.mydoBattle.entity.Battle;
+import com.doBattle.mydoBattle.entity.JoinBattle;
 import com.doBattle.mydoBattle.entity.Member;
 import com.doBattle.mydoBattle.exception.battle.BattleNullException;
 import com.doBattle.mydoBattle.repository.BattleRepository;
+import com.doBattle.mydoBattle.repository.JoinBattleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,9 @@ public class BattleService {
     @Autowired
     private BattleRepository battleRepository;
 
+    @Autowired
+    private JoinBattleRepository joinBattleRepository;
+
     public MakeBattleResponseDto getMakeBattle(Member member) {
         MakeBattleResponseDto dto = MakeBattleResponseDto.createDto(member);
         return dto;
@@ -36,26 +41,29 @@ public class BattleService {
             throw new BattleNullException("배틀 종료시점이 오늘 이전입니다.");
         
         Long battleCode = generateUniqueBattleCode();   //배틀 난수 생성
-        Battle battle = Battle.createBattle(dto, member, battleCode);
+        Battle battle = Battle.createBattle(dto, battleCode);
         battleRepository.save(battle);
+
+        JoinBattle joinList = JoinBattle.createJoinBattle(member, battle);
+        joinBattleRepository.save(joinList);
 
         MakeBattleSuccessDto returnDto = new MakeBattleSuccessDto(battleCode);
         return returnDto;
     }
 
     public List<BattleListDto> doingBattleList(Member member) {
-        List<Battle> joinedBattle = battleRepository.findByJoinMemberId(member.getId());
+        List<JoinBattle> joinedBattle = joinBattleRepository.findByMemberId(member.getId());
 
         //유저가 참여하고 있는 모든 배틀에 대한 정보
         List<BattleListDto> dto = new ArrayList<>();
-        for(Battle battle : joinedBattle){
+        for(JoinBattle battle : joinedBattle){
             //배틀코드 동일한 다른 참여자 불러오기
-            List<String> partnerUser = battleRepository.findByBattleCodeWithoutCurrentMember(battle.getBattleCode(), member.getId())
+            List<String> partnerUser = joinBattleRepository.findByBattleCodeWithoutCurrentMember(battle.getBattle().getBattleCode(), member.getId())
                     .stream()
-                    .map(b -> b.getJoinMember().getUsername())   //Battle 객체에 대해 getJoinMember() 메서드를 호출해서 Member 객체 얻어냄
+                    .map(b -> b.getMember().getUsername())   //JoinBattle 객체에 대해 getMember() 메서드를 호출해서 Member 객체 얻어냄
                     .collect(Collectors.toList());
 
-            BattleListDto eachDto = BattleListDto.createDto(battle, partnerUser);
+            BattleListDto eachDto = BattleListDto.createDto(battle.getBattle(), partnerUser);
             dto.add(eachDto);
         }
 
