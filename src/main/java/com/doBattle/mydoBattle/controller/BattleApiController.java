@@ -3,7 +3,7 @@ package com.doBattle.mydoBattle.controller;
 import com.doBattle.mydoBattle.dto.battle.BattleListDto;
 import com.doBattle.mydoBattle.dto.battle.MakeBattleRequestDto;
 import com.doBattle.mydoBattle.dto.battle.MakeBattleResponseDto;
-import com.doBattle.mydoBattle.dto.battle.MakeBattleSuccessDto;
+import com.doBattle.mydoBattle.dto.battle.BattleCodeDto;
 import com.doBattle.mydoBattle.entity.Member;
 import com.doBattle.mydoBattle.exception.member.MemberNullException;
 import com.doBattle.mydoBattle.service.BattleService;
@@ -34,12 +34,22 @@ public class BattleApiController {
     }
 
     @PostMapping("/makeBattle")
-    public ResponseEntity<MakeBattleSuccessDto> postMakeBattle(@RequestBody MakeBattleRequestDto dto, HttpSession session){
+    public ResponseEntity<BattleCodeDto> postMakeBattle(@RequestBody MakeBattleRequestDto dto, HttpSession session){
         Member member = (Member) session.getAttribute("currentMember");
         if(member == null)
             throw new MemberNullException("세션 없음.");
 
-        MakeBattleSuccessDto returnDto = battleService.makeBattle(dto, member);
+        BattleCodeDto returnDto = battleService.makeBattle(dto, member);
+        return ResponseEntity.status(HttpStatus.OK).body(returnDto);
+    }
+
+    @PostMapping("/joinBattle")
+    public ResponseEntity<BattleCodeDto> joinBattle(@RequestBody BattleCodeDto dto, HttpSession session){
+        Member member = (Member) session.getAttribute("currentMember");
+        if(member == null)
+            throw new MemberNullException("세션 없음.");
+
+        BattleCodeDto returnDto = battleService.joinBattle(dto, member);
         return ResponseEntity.status(HttpStatus.OK).body(returnDto);
     }
 

@@ -8,6 +8,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter @Setter
-public class MakeBattleSuccessDto {
+public class BattleCodeDto {
     private Long battleCode;
 }

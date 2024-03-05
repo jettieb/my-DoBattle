@@ -3,7 +3,7 @@ package com.doBattle.mydoBattle.service;
 import com.doBattle.mydoBattle.dto.battle.BattleListDto;
 import com.doBattle.mydoBattle.dto.battle.MakeBattleRequestDto;
 import com.doBattle.mydoBattle.dto.battle.MakeBattleResponseDto;
-import com.doBattle.mydoBattle.dto.battle.MakeBattleSuccessDto;
+import com.doBattle.mydoBattle.dto.battle.BattleCodeDto;
 import com.doBattle.mydoBattle.entity.Battle;
 import com.doBattle.mydoBattle.entity.JoinBattle;
 import com.doBattle.mydoBattle.entity.Member;
@@ -34,7 +34,7 @@ public class BattleService {
     }
 
     @Transactional
-    public MakeBattleSuccessDto makeBattle(MakeBattleRequestDto dto, Member member){
+    public BattleCodeDto makeBattle(MakeBattleRequestDto dto, Member member){
         if(dto.getBattleName().isEmpty() || dto.getBattleCategory().isEmpty() || dto.getBattleEndDate() == null)
             throw new BattleNullException("배틀이름/카테고리/종료일자 중 하나가 비어있습니다.");
         if(dto.getBattleEndDate().isBefore(LocalDate.now()))
@@ -47,8 +47,19 @@ public class BattleService {
         JoinBattle joinList = JoinBattle.createJoinBattle(member, battle);
         joinBattleRepository.save(joinList);
 
-        MakeBattleSuccessDto returnDto = new MakeBattleSuccessDto(battleCode);
-        return returnDto;
+        return new BattleCodeDto(battleCode);
+    }
+
+    public BattleCodeDto joinBattle(BattleCodeDto dto, Member member) {
+        Battle battle = battleRepository.findById(dto.getBattleCode())
+                .orElseThrow(() -> new BattleNullException("배틀코드에 해당하는 배틀이 존재하지 않습니다."));
+        if(!joinBattleRepository.findByBattleCodeAndCurrentMember(battle.getBattleCode(), member.getId()).isEmpty())
+            throw new BattleNullException("이미 배틀에 참여하였습니다.");
+
+        JoinBattle joinBattle = JoinBattle.createJoinBattle(member, battle);
+        joinBattleRepository.save(joinBattle);
+
+        return new BattleCodeDto(battle.getBattleCode());
     }
 
     public List<BattleListDto> doingBattleList(Member member) {
@@ -60,7 +71,7 @@ public class BattleService {
             //배틀코드 동일한 다른 참여자 불러오기
             List<String> partnerUser = joinBattleRepository.findByBattleCodeWithoutCurrentMember(battle.getBattle().getBattleCode(), member.getId())
                     .stream()
-                    .map(b -> b.getMember().getUsername())   //JoinBattle 객체에 대해 getMember() 메서드를 호출해서 Member 객체 얻어냄
+                    .map(b -> b.getMember().getUsername())   //username만 반환하도록 매핑
                     .collect(Collectors.toList());
 
             BattleListDto eachDto = BattleListDto.createDto(battle.getBattle(), partnerUser);
