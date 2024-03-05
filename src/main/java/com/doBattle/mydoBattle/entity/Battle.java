@@ -15,6 +15,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class Battle {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
     private Long battleCode;    //난수코드 직접 생성 예정
 
     @Column(nullable = false)
@@ -30,22 +34,18 @@ public class Battle {
     private LocalDate endDate;
 
     @ManyToOne
-    @JoinColumn(name="member_create_id")    //조인하려는 칼럼명이 아님.
-    private Member createUser;
-
-    @ManyToOne
-    @JoinColumn(name="member_join_id")
-    private Member joinUser;
+    @JoinColumn(name="member_id")    //조인하려는 칼럼명이 아님! db 컬럼명
+    private Member joinMember;
 
     public static Battle createBattle(MakeBattleRequestDto dto, Member member, Long battleCode){
         return new Battle(
+                dto.getId(),
                 battleCode,
                 dto.getBattleName(),
                 dto.getBattleCategory(),
                 LocalDate.now(),
                 dto.getBattleEndDate(),
-                member,
-                null
+                member
         );
     }
 }

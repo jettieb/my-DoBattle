@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 @Getter @Setter
 public class MakeBattleRequestDto {
+    private Long Id;
     private String battleName;
     private String battleCategory;
 
