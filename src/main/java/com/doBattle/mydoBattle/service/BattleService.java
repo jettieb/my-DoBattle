@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -43,17 +44,19 @@ public class BattleService {
     }
 
     public List<BattleListDto> doingBattleList(Member member) {
-        List<Battle> joinedBattle = battleRepository.findByMemberId(member.getId());
-        List<BattleListDto> dto = null;
-        for(int i=0; i< joinedBattle.size(); i++){
+        List<Battle> joinedBattle = battleRepository.findByJoinMemberId(member.getId());
+
+        //유저가 참여하고 있는 모든 배틀에 대한 정보
+        List<BattleListDto> dto = new ArrayList<>();
+        for(Battle battle : joinedBattle){
             //배틀코드 동일한 다른 참여자 불러오기
-            List<Member> partnerUser = battleRepository.findByBattleCodeWithoutCurrentMember(joinedBattle.get(i).getBattleCode(), member.getId())
+            List<Long> partnerUser = battleRepository.findByBattleCodeWithoutCurrentMember(battle.getBattleCode(), member.getId())
                     .stream()
-                    .map(Battle::getJoinMember)   //Battle 객체에 대해 getJoinMember() 메서드를 호출해서 Member 객체 얻어냄
+                    .map(b -> b.getJoinMember().getId())   //Battle 객체에 대해 getJoinMember() 메서드를 호출해서 Member 객체 얻어냄
                     .collect(Collectors.toList());
 
-            BattleListDto eachDto = BattleListDto.createDto(joinedBattle.get(i), partnerUser);
-            dto.set(i, eachDto);
+            BattleListDto eachDto = BattleListDto.createDto(battle, partnerUser);
+            dto.add(eachDto);
         }
 
         return dto;

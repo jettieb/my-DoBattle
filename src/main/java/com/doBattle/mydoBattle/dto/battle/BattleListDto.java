@@ -17,9 +17,9 @@ public class BattleListDto {
     private String battleName;
     private LocalDate startDate;
     private LocalDate endDate;
-    private List<Member> joinMember;
+    private List<Long> joinMember;
 
-    public static BattleListDto createDto(Battle battle, List<Member> memberList){
+    public static BattleListDto createDto(Battle battle, List<Long> memberList){
         return new BattleListDto(
                 battle.getBattleName(),
                 battle.getStartDate(),
