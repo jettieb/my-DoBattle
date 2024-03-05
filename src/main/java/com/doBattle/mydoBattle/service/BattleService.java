@@ -50,9 +50,9 @@ public class BattleService {
         List<BattleListDto> dto = new ArrayList<>();
         for(Battle battle : joinedBattle){
             //배틀코드 동일한 다른 참여자 불러오기
-            List<Long> partnerUser = battleRepository.findByBattleCodeWithoutCurrentMember(battle.getBattleCode(), member.getId())
+            List<String> partnerUser = battleRepository.findByBattleCodeWithoutCurrentMember(battle.getBattleCode(), member.getId())
                     .stream()
-                    .map(b -> b.getJoinMember().getId())   //Battle 객체에 대해 getJoinMember() 메서드를 호출해서 Member 객체 얻어냄
+                    .map(b -> b.getJoinMember().getUsername())   //Battle 객체에 대해 getJoinMember() 메서드를 호출해서 Member 객체 얻어냄
                     .collect(Collectors.toList());
 
             BattleListDto eachDto = BattleListDto.createDto(battle, partnerUser);
