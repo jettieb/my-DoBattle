@@ -2,7 +2,6 @@ package com.doBattle.mydoBattle.service;
 
 import com.doBattle.mydoBattle.dto.battle.BattleListDto;
 import com.doBattle.mydoBattle.dto.battle.MakeBattleRequestDto;
-import com.doBattle.mydoBattle.dto.battle.MakeBattleResponseDto;
 import com.doBattle.mydoBattle.dto.battle.BattleCodeDto;
 import com.doBattle.mydoBattle.entity.Battle;
 import com.doBattle.mydoBattle.entity.JoinBattle;
@@ -28,11 +27,6 @@ public class BattleService {
     @Autowired
     private JoinBattleRepository joinBattleRepository;
 
-    public MakeBattleResponseDto getMakeBattle(Member member) {
-        MakeBattleResponseDto dto = MakeBattleResponseDto.createDto(member);
-        return dto;
-    }
-
     @Transactional
     public BattleCodeDto makeBattle(MakeBattleRequestDto dto, Member member){
         if(dto.getBattleName().isEmpty() || dto.getBattleCategory().isEmpty() || dto.getBattleEndDate() == null)
@@ -50,6 +44,7 @@ public class BattleService {
         return new BattleCodeDto(battleCode);
     }
 
+    @Transactional
     public BattleCodeDto joinBattle(BattleCodeDto dto, Member member) {
         Battle battle = battleRepository.findById(dto.getBattleCode())
                 .orElseThrow(() -> new BattleNullException("배틀코드에 해당하는 배틀이 존재하지 않습니다."));

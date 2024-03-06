@@ -1,5 +1,6 @@
 package com.doBattle.mydoBattle.entity;
 
+import com.doBattle.mydoBattle.dto.todo.TodoRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +23,7 @@ public class Todo {
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "battle_code", referencedColumnName = "battleCode")
+    @JoinColumn(name = "battle_code")
     private Battle battleCode;
 
     @Column
@@ -33,4 +34,15 @@ public class Todo {
 
     @Column
     private LocalDate createDate;
+
+    public static Todo createTodo(TodoRequestDto dto, Member member, Battle battle){
+        return new Todo(
+                dto.getId(),
+                member,
+                battle,
+                dto.getContent(),
+                false,
+                LocalDate.now()
+        );
+    }
 }
