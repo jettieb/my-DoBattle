@@ -10,6 +10,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TodoRequestDto {
     private Long id;
-    private Long memberId;
     private String content;
 }
