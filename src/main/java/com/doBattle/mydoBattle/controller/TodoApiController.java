@@ -38,4 +38,14 @@ public class TodoApiController {
 
         return ResponseEntity.status(HttpStatus.OK).body(returnDto);
     }
+
+    @DeleteMapping("todo/delete/{todoId}")
+    public ResponseEntity<String> deleteTodo(@PathVariable Long todoId, HttpSession session){
+        Member member = (Member) session.getAttribute("currentMember");
+        if(member == null)
+            throw new MemberNullException("세션 없음.");
+
+        todoService.deleteTodo(todoId, member);
+        return ResponseEntity.status(HttpStatus.OK).body("투두 지우기 성공!");
+    }
 }

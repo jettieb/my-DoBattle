@@ -51,4 +51,12 @@ public class TodoService {
 
         return TodoResponseDto.createDto(todo);
     }
+
+    @Transactional
+    public void deleteTodo(Long todoId, Member member) {
+        Todo todo = todoRepository.findById(todoId)
+                .orElseThrow(()-> new TodoNullException("해당 id에 해당하는 투두가 존재하지 않습니다."));
+
+        todoRepository.delete(todo);
+    }
 }
