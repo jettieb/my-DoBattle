@@ -1,7 +1,6 @@
 package com.doBattle.mydoBattle.dto.battle;
 
 import com.doBattle.mydoBattle.entity.Battle;
-import com.doBattle.mydoBattle.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,14 +12,14 @@ import java.util.List;
 @Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BattleListDto {
+public class DoingBattleListDto {
     private String battleName;
     private LocalDate startDate;
     private LocalDate endDate;
     private List<String> joinMember;
 
-    public static BattleListDto createDto(Battle battle, List<String> memberList){
-        return new BattleListDto(
+    public static DoingBattleListDto createDto(Battle battle, List<String> memberList){
+        return new DoingBattleListDto(
                 battle.getBattleName(),
                 battle.getStartDate(),
                 battle.getEndDate(),

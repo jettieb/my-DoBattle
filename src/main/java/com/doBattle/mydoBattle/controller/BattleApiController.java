@@ -1,6 +1,6 @@
 package com.doBattle.mydoBattle.controller;
 
-import com.doBattle.mydoBattle.dto.battle.BattleListDto;
+import com.doBattle.mydoBattle.dto.battle.DoingBattleListDto;
 import com.doBattle.mydoBattle.dto.battle.MakeBattleRequestDto;
 import com.doBattle.mydoBattle.dto.battle.BattleCodeDto;
 import com.doBattle.mydoBattle.entity.Member;
@@ -43,12 +43,12 @@ public class BattleApiController {
     }
 
     @GetMapping("/doingBattleList")
-    public ResponseEntity<List<BattleListDto>> doingBattleList(HttpSession session){
+    public ResponseEntity<List<DoingBattleListDto>> doingBattleList(HttpSession session){
         Member member = (Member) session.getAttribute("currentMember");
         if(member == null)
             throw new MemberNullException("세션 없음.");
 
-        List<BattleListDto> dto = battleService.doingBattleList(member);
+        List<DoingBattleListDto> dto = battleService.doingBattleList(member);
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 

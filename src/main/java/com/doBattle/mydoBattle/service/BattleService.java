@@ -1,6 +1,6 @@
 package com.doBattle.mydoBattle.service;
 
-import com.doBattle.mydoBattle.dto.battle.BattleListDto;
+import com.doBattle.mydoBattle.dto.battle.DoingBattleListDto;
 import com.doBattle.mydoBattle.dto.battle.MakeBattleRequestDto;
 import com.doBattle.mydoBattle.dto.battle.BattleCodeDto;
 import com.doBattle.mydoBattle.entity.Battle;
@@ -57,11 +57,11 @@ public class BattleService {
         return new BattleCodeDto(battle.getBattleCode());
     }
 
-    public List<BattleListDto> doingBattleList(Member member) {
+    public List<DoingBattleListDto> doingBattleList(Member member) {
         List<JoinBattle> joinedBattle = joinBattleRepository.findByMemberId(member.getId());
 
         //유저가 참여하고 있는 모든 배틀에 대한 정보
-        List<BattleListDto> dto = new ArrayList<>();
+        List<DoingBattleListDto> dto = new ArrayList<>();
         for(JoinBattle battle : joinedBattle){
             //배틀코드 동일한 다른 참여자 불러오기
             List<String> partnerUser = joinBattleRepository.findByBattleCodeWithoutCurrentMember(battle.getBattle().getBattleCode(), member.getId())
@@ -69,7 +69,7 @@ public class BattleService {
                     .map(b -> b.getMember().getUsername())   //username만 반환하도록 매핑
                     .collect(Collectors.toList());
 
-            BattleListDto eachDto = BattleListDto.createDto(battle.getBattle(), partnerUser);
+            DoingBattleListDto eachDto = DoingBattleListDto.createDto(battle.getBattle(), partnerUser);
             dto.add(eachDto);
         }
 
