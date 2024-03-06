@@ -1,6 +1,8 @@
 package com.doBattle.mydoBattle.exception;
 
+import com.doBattle.mydoBattle.entity.Todo;
 import com.doBattle.mydoBattle.exception.battle.BattleNullException;
+import com.doBattle.mydoBattle.exception.battle.TodoNullException;
 import com.doBattle.mydoBattle.exception.member.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -41,6 +43,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BattleNullException.class)
     public ResponseEntity<String> handleBattleNullException(BattleNullException e){
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(e.getMessage());
+    }
+
+    @ExceptionHandler(TodoNullException.class)
+    public ResponseEntity<String> handleBattleNullException(TodoNullException e){
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(e.getMessage());

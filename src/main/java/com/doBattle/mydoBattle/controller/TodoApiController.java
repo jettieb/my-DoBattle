@@ -10,10 +10,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class TodoApiController {
@@ -27,6 +24,17 @@ public class TodoApiController {
             throw new MemberNullException("세션 없음.");
 
         TodoResponseDto returnDto = todoService.createTodo(dto, member, battleCode);
+
+        return ResponseEntity.status(HttpStatus.OK).body(returnDto);
+    }
+
+    @PatchMapping("/todo/click/{todoId}")
+    public ResponseEntity<TodoResponseDto> successTodo(@PathVariable Long todoId, HttpSession session){
+        Member member = (Member) session.getAttribute("currentMember");
+        if(member == null)
+            throw new MemberNullException("세션 없음.");
+
+        TodoResponseDto returnDto = todoService.successTodo(todoId, member);
 
         return ResponseEntity.status(HttpStatus.OK).body(returnDto);
     }
