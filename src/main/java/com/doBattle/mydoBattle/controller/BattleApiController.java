@@ -1,5 +1,6 @@
 package com.doBattle.mydoBattle.controller;
 
+import com.doBattle.mydoBattle.dto.battle.BattlePageResponseDto;
 import com.doBattle.mydoBattle.dto.battle.DoingBattleListDto;
 import com.doBattle.mydoBattle.dto.battle.MakeBattleRequestDto;
 import com.doBattle.mydoBattle.dto.battle.BattleCodeDto;
@@ -10,10 +11,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -52,4 +50,13 @@ public class BattleApiController {
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
+    @GetMapping("battle/{battleCode}")
+    public ResponseEntity<BattlePageResponseDto> battlePage(@PathVariable Long battleCode, HttpSession session){
+        Member member = (Member) session.getAttribute("currentMember");
+        if(member == null)
+            throw new MemberNullException("세션 없음.");
+
+        BattlePageResponseDto dto = battleService.getBattlePage(battleCode, member);
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
+    }
 }
