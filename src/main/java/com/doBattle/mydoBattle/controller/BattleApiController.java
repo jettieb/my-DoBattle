@@ -4,6 +4,7 @@ import com.doBattle.mydoBattle.dto.battle.BattlePageResponseDto;
 import com.doBattle.mydoBattle.dto.battle.DoingBattleListDto;
 import com.doBattle.mydoBattle.dto.battle.MakeBattleRequestDto;
 import com.doBattle.mydoBattle.dto.battle.BattleCodeDto;
+import com.doBattle.mydoBattle.dto.calender.CalenderDto;
 import com.doBattle.mydoBattle.entity.Member;
 import com.doBattle.mydoBattle.exception.member.MemberNullException;
 import com.doBattle.mydoBattle.service.BattleService;
@@ -57,6 +58,16 @@ public class BattleApiController {
             throw new MemberNullException("세션 없음.");
 
         BattlePageResponseDto dto = battleService.getBattlePage(battleCode, member);
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
+    }
+
+    @GetMapping("calender/{battleCode}")
+    public ResponseEntity<CalenderDto> calenderPage(@PathVariable Long battleCode, HttpSession session){
+        Member member = (Member) session.getAttribute("currentMember");
+        if(member == null)
+            throw new MemberNullException("세션 없음.");
+
+        CalenderDto dto = battleService.getCalenderPage(battleCode, member);
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 }

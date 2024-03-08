@@ -4,6 +4,7 @@ import com.doBattle.mydoBattle.dto.battle.BattlePageResponseDto;
 import com.doBattle.mydoBattle.dto.battle.DoingBattleListDto;
 import com.doBattle.mydoBattle.dto.battle.MakeBattleRequestDto;
 import com.doBattle.mydoBattle.dto.battle.BattleCodeDto;
+import com.doBattle.mydoBattle.dto.calender.CalenderDto;
 import com.doBattle.mydoBattle.dto.member.MemberAndPercentDto;
 import com.doBattle.mydoBattle.dto.todo.TodoResponseDto;
 import com.doBattle.mydoBattle.entity.Battle;
@@ -18,9 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -94,10 +93,7 @@ public class BattleService {
         MemberAndPercentDto currentUserDto = MemberAndPercentDto.createDto(member, currentUserPercent);
         
         //파트너 사용자의 퍼센트
-        List<Member> partnerUser = joinBattleRepository.findByBattleCodeWithoutCurrentMember(battle.getBattleCode(), member.getId())
-                .stream()
-                .map(b -> b.getMember())   //member로 매핑
-                .collect(Collectors.toList());
+        List<Member> partnerUser = getPartnerList(battle, member);
 
         List<MemberAndPercentDto> partnerDto = new ArrayList<>();
         for(Member partner : partnerUser){
@@ -113,6 +109,31 @@ public class BattleService {
                 .collect(Collectors.toList());
 
         return BattlePageResponseDto.createDto(battle, currentUserDto, partnerDto, todo);
+    }
+
+    @Transactional
+    public CalenderDto getCalenderPage(Long battleCode, Member member) {
+        Battle battle = battleRepository.findById(battleCode)
+                .orElseThrow(()-> new BattleNullException("배틀코드에 해당하는 배틀이 존재하지 않습니다."));
+
+        //return 해주려는 dto
+        Map<LocalDate, List<MemberAndPercentDto>> returnDto = new HashMap<>();
+        //날짜마다의 모든 멤버와 퍼센트 정보 dto에 저장
+        for(LocalDate date = battle.getStartDate(); date.isBefore(LocalDate.now().plusDays(1)); date = date.plusDays(1)){
+            //배틀에 참여하고 있는 모든 유저
+            List<Member> User = getPartnerList(battle, member);
+            User.add(member);
+            
+            LocalDate finalDate = date;
+            List<MemberAndPercentDto> percent = User
+                    .stream()
+                    .map(m -> MemberAndPercentDto.createDto(m, calculatePercent(m, finalDate, battle)))
+                    .collect(Collectors.toList());
+
+            returnDto.put(date, percent);
+        }
+
+        return new CalenderDto(returnDto);
     }
     
     //배틀 난수코드 생성
@@ -137,5 +158,13 @@ public class BattleService {
         else percent = (successTodoNum * 100.0)/allTodoNum;
 
         return percent;
+    }
+
+    //배틀의 상대방 리스트 구하기
+    public List<Member> getPartnerList(Battle battle, Member currentMember){
+        return joinBattleRepository.findByBattleCodeWithoutCurrentMember(battle.getBattleCode(), currentMember.getId())
+                .stream()
+                .map(b -> b.getMember())   //member로 매핑
+                .collect(Collectors.toList());
     }
 }
